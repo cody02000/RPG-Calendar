@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<!---
+/**
+* @package RPG Date and Calendar Mod
+*
+* @author Cody Williams
+* @copyright 2015
+* @version 1.2
+* @license BSD 3-clause
+*/
+-->
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+<id>Cody:AO Date and Calendar Mod</id>
+<version>1.2</version>
+<file name="$sourcedir/PortalBlocks.php">
+		<operation>
+			<search position="end"></search>
+			<add><![CDATA[
+function sp_rpgCal($parameters, $id, $return_parameters = false)
+{
+  global $scripturl, $txt, $context;
+  loadLanguage('rpgCal');
+
+  
+  	$block_parameters = array(
+		'content_above' => 'textarea',
+		'content_below' => 'textarea',
+	);
+
+	if ($return_parameters)
+		return $block_parameters;
+
+	$content_above = '<div class=sp-rpgCal-above>'.(!empty($parameters['content_above']) ? $parameters['content_above'] : '') . '</div>';
+	$content_below= '<div class=sp-rpgCal-below>'.(!empty($parameters['content_below']) ? $parameters['content_below'] : '') . '</div>';
+	
+
+	echo '
+								', un_htmlspecialchars($content_above);
+	rpgCal();
+	echo '
+								', un_htmlspecialchars($content_below);
+
+}
+]]></add>
+		</operation>
+	</file>
+
+
+
+</modification>

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<!---
+/**
+* @package RPG Date and Calendar Mod
+*
+* @author Cody Williams
+* @copyright 2015
+* @version 1.2
+* @license BSD 3-clause
+*/
+-->
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>cody:Date and Calendar</id>
+	<name>RPG Date and Calendar Mod</name>
+	<type>modification</type>
+	<version>1.2</version>
+	
+	<install for="2.0 - 2.0.99,2.0 RC2,2.0 RC3,2.0 RC4,2.0 RC5">
+		<readme type="inline">This will install RPG Date and Calendar for SMF 2.0.x</readme>
+		<database type="file">install.php</database>
+		<code>install-hooks.php</code>
+		<modification>rpgCal.xml</modification>
+		<require-file name="rpgCal.php" destination="$sourcedir" />
+		<require-file name="Subs-rpgCal.php" destination="$sourcedir" />
+		<require-file name="rpgCalAdmin.php" destination="$sourcedir" />
+		<require-file name="rpgCalBBCode.php" destination="$sourcedir" />
+		<require-file name="rpgCal.template.php" destination="$themedir" />
+		<require-file name="rpgCal.js" destination="$themedir/scripts" />
+		<require-file name="rpgCal.css" destination="$themedir/css" />
+		<require-file name="rpgCal.english.php" destination="$languagedir" />
+		<redirect url="$scripturl?action=admin;area=rpg_cal;sa=events" />
+	</install>
+	
+	<uninstall for="2.0 - 2.0.99,2.0 RC2,2.0 RC3,2.0 RC4,2.0 RC5">
+		<code>install-hooks.php</code>
+		<modification reverse="true">rpgCal.xml</modification>
+		<remove-file name="$sourcedir/rpgCalAdmin.php" />
+		<remove-file name="$sourcedir/Subs-rpgCal.php" />
+		<remove-file name="$sourcedir/rpgCalBBCode.php" />
+		<remove-file name="$sourcedir/rpgCal.php" />
+		<remove-file name="$themedir/rpgCal.template.php" />
+		<remove-file name="$themedir/scripts/rpgCal.js" />
+		<remove-file name="$themedir/css/rpgCal.css" />
+		<remove-file name="$languagedir/rpgCal.english.php" />
+	</uninstall>
+</package-info>
