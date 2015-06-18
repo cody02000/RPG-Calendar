@@ -28,7 +28,7 @@
 	
 	<uninstall for="2.0 - 2.0.99,2.0 RC2,2.0 RC3,2.0 RC4,2.0 RC5">
 		<code>install-hooks.php</code>
-		<modification reverse="true">rpgCal.xml</modification>
+		<modification reverse="true">modification.xml</modification>
 		<remove-file name="$sourcedir/rpgCalAdmin.php" />
 		<remove-file name="$sourcedir/Subs-rpgCal.php" />
 		<remove-file name="$sourcedir/rpgCalBBCode.php" />
