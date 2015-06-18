@@ -18,9 +18,9 @@
 	
 	<install for="2.0 - 2.0.99,2.0 RC2,2.0 RC3,2.0 RC4,2.0 RC5">
 		<readme type="inline">This will install RPG Date and Calendar for SMF 2.0.x</readme>
-		<database type="file">install.php</database>
+		<database type="file">install-database.php</database>
 		<code>install-hooks.php</code>
-		<modification>rpgCal.xml</modification>
+		<modification>modification.xml</modification>
 		<require-dir name="Sources" destination="$boarddir" />
 		<require-dir name="Themes" destination="$boarddir" />
 		<redirect url="$scripturl?action=admin;area=rpg_cal;sa=events" />
