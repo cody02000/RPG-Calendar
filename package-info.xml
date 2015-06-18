@@ -14,21 +14,15 @@
 	<id>cody:Date and Calendar</id>
 	<name>RPG Date and Calendar Mod</name>
 	<type>modification</type>
-	<version>1.2</version>
+	<version>1.3</version>
 	
 	<install for="2.0 - 2.0.99,2.0 RC2,2.0 RC3,2.0 RC4,2.0 RC5">
 		<readme type="inline">This will install RPG Date and Calendar for SMF 2.0.x</readme>
 		<database type="file">install.php</database>
 		<code>install-hooks.php</code>
 		<modification>rpgCal.xml</modification>
-		<require-file name="rpgCal.php" destination="$sourcedir" />
-		<require-file name="Subs-rpgCal.php" destination="$sourcedir" />
-		<require-file name="rpgCalAdmin.php" destination="$sourcedir" />
-		<require-file name="rpgCalBBCode.php" destination="$sourcedir" />
-		<require-file name="rpgCal.template.php" destination="$themedir" />
-		<require-file name="rpgCal.js" destination="$themedir/scripts" />
-		<require-file name="rpgCal.css" destination="$themedir/css" />
-		<require-file name="rpgCal.english.php" destination="$languagedir" />
+		<require-dir name="Sources" destination="$boarddir" />
+		<require-dir name="Themes" destination="$boarddir" />
 		<redirect url="$scripturl?action=admin;area=rpg_cal;sa=events" />
 	</install>
 	
