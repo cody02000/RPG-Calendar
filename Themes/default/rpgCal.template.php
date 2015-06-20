@@ -10,5 +10,15 @@
 
 function template_current()
 {
-	
+	echo $context['rpgCalTest'];
+}
+
+function template_year()
+{
+	echo $context['rpgCalTest'];
+}
+
+function template_bbcode()
+{
+	echo $context['rpgCalTest'];
 }
