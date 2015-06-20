@@ -43,7 +43,21 @@ function rpgCalMain()
   $subActions[$_REQUEST['sa']]();
 }
 
+function rpgCalCurrent() {
+	global $context, $scripturl, $txt;
+	$context['sub_template'] = 'current';
+	$context['rpgCalTest'] = 'Current Calendar Future Feature';
+}
+
 function rpgCalYear() {
-echo 'future feature';
+	global $context, $scripturl, $txt;
+	$context['sub_template'] = 'year';
+	$context['rpgCalTest'] = 'Full Year Calendar Future Feature';
+}
+
+function rpgCalBBCode() {
+	global $context, $scripturl, $txt;
+	$context['sub_template'] = 'bbcode';
+	$context['rpgCalTest'] = 'BBCode Calendar Future Feature';
 }
 ?>
