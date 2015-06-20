@@ -17,7 +17,7 @@ if (!defined('SMF'))
 function rpgCalAdminMain()
 {
 	global $context, $txt, $scripturl, $modSettings;
-	loadTemplate('rpgCal');
+	loadTemplate('rpgCalAdmin');
 	loadLanguage('rpgCal');
 	
 	isAllowedTo('rpg_cal_edit_settings');
