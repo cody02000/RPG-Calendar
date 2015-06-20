@@ -108,7 +108,7 @@ function rpgCal_portalBlock($start=0,$end=0)
 /**
  *  Creates a BBCode calendar for the admin section.
  */
-function rpgCalBBCode()
+function rpgCalBBCodeAdmin()
 {
 	global $txt, $context, $scripturl, $sourcedir;
 

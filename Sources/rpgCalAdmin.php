@@ -29,7 +29,7 @@ function rpgCalAdminMain()
 	$subActions = array(
 		'edit_event' => 'rpgCalEditEvent',
 		'events' => 'rpgCalEvents',
-		'bbcode' => 'rpgCalBBCode',
+		'bbcode' => 'rpgCalBBCodeAdmin',
 	);
 
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'events';
@@ -178,7 +178,7 @@ function rpgCalEvents($return_config = false)
 		$context['page_title'] = $txt['rpg_cal_manage_events'];
 		$context['default_list'] = 'event_list';
 		$context['post_url'] = $scripturl . '?action=admin;area=rpg_cal;sa=events;update';
-		loadTemplate('rpgCal');
+		loadTemplate('rpgCalAdmin');
 		
 		$context['sub_template'] = 'general_settings';
 		//	Finally prepare the settings array to be shown by the 'show_settings' template.
@@ -191,7 +191,7 @@ function rpgCalEditEvent()
 {
 	global $txt, $context, $scripturl, $smcFunc;
 
-	loadTemplate('rpgCal');
+	loadTemplate('rpgCalAdmin');
 
 	$context['is_new'] = !isset($_REQUEST['event']);
 	$context['page_title'] = $context['is_new'] ? $txt['rpg_cal_event_add'] : $txt['rpg_cal_event_edit'];

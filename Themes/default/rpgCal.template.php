@@ -8,3 +8,7 @@
 * @license BSD 3-clause
 */
 
+function template_current()
+{
+	
+}
