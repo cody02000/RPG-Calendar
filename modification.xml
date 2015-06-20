@@ -37,7 +37,7 @@ function sp_rpgCal($parameters, $id, $return_parameters = false)
 
 	echo '
 								', un_htmlspecialchars($content_above);
-	rpgCal();
+	rpgCal_portalBlock();
 	echo '
 								', un_htmlspecialchars($content_below);
 

@@ -11,12 +11,23 @@
 // First of all, we make sure we are accessing the source file via SMF so that people can not directly access the file. 
 if (!defined('SMF'))
   die('Hack Attempt...');
-  
+
+/**
+ *  Define the function and file used for the rpg_cal action.  
+ *  
+ *  Called by the integrate_actions hook.
+ */
 function rpg_cal(&$actionArray)
 {
 	$actionArray['rpg_cal'] = array('rpgCal.php', 'rpgCalMain');
 }
 
+/**
+ *  Adds jquery, css, and javascript to the $context['html_headers'].  
+ *  Sets $context['jquery'] so that other rpg mods will not add jquery a secondd time and defines which mod set it.
+ *  
+ *  Called by integrate_load_theme hook.
+ */
 function rpgCalHeader(){
   global $context, $settings, $modSettings;
   
@@ -31,7 +42,11 @@ function rpgCalHeader(){
     $(document).ready(function() {$(".tip").tipr();});
     // ]]></script>';
 }
-
+/**
+ *  Sets up admin areas.
+ *  
+ *  Called by integrate_admin_areas hook.
+ */
 function rpgCalAdminMenu(&$admin_areas)
 {
   global $txt, $scripturl;
@@ -47,7 +62,11 @@ function rpgCalAdminMenu(&$admin_areas)
       'bbcode' => array($txt['rpg_cal_bbcode'],'rpg_cal_edit_settings'),
     ),);
 }
-
+/**
+ *  Sets up permissions to edit permissions.
+ *  
+ *  Called by the integrate_load_permissions hook.
+ */
 function rpgCalPermissions(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions)
 {
   global $context;
@@ -63,7 +82,12 @@ function rpgCalPermissions(&$permissionGroups, &$permissionList, &$leftPermissio
   $permissionList['membergroup'] = array_merge($permissionList['membergroup'], $list);
 }
 
-function rpgCal($start=0,$end=0)
+/**
+ *  Funtion for setting up a call to rpgCalCalendar for a portal block.
+ *  
+ *  Currently used for Simple Portal.  Could probably be used for other portals as well.
+ */
+function rpgCal_portalBlock($start=0,$end=0)
 {
   global $context, $modSettings,$sourcedir;
   $context['rpgCal']=true;
@@ -74,6 +98,9 @@ function rpgCal($start=0,$end=0)
   rpgCalCalendar($startdate,$enddate);
 }
 
+/**
+ *  Creates a BBCode calendar for the admin section.
+ */
 function rpgCalBBCode()
 {
 	global $txt, $context, $scripturl, $sourcedir;
