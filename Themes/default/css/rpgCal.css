@@ -7,34 +7,37 @@
 * @license BSD 3-clause
 */
 
-table.rpgCal { /*Calendar Table*/
+/**
+* CSS styles for portal block calendar.
+*/
+table.rpgCal-block { /*Calendar Table*/
 	border-collapse: collapse;
 	margin:auto;
 	border:1px #186565 solid;
 } 
 
-table.rpgCal caption { /*Calendar Table*/
+table.rpgCal-block caption { /*Calendar Table*/
 	font-weight:bolder;
 } 
 
-tr.rpgCal-row { /*Each row in the calendar*/
+tr.rpgCal-block-row { /*Each row in the calendar*/
 }
 
-th.rpgCal-day-head { /*Headings with days of the week*/
+th.rpgCal-block-day-head { /*Headings with days of the week*/
 	background-color: #4f4f4f;
 	text-align:center;
 	color:rgb(180, 180, 180);
 	padding:3px;
 }
 
-td.rpgCal-day-np { /*Blank days */
+td.rpgCal-block-day-np { /*Blank days */
 }
 
-td.rpgCal-day { /*Days*/
+td.rpgCal-block-day { /*Days*/
 	color:rgb(175, 175, 175);
 	text-align:center;
 }
-h4.rpgCal-dates-header {
+h4.rpgCal-block-dates-header {
 	color:orange;
 	font-size:12pt;
 	text-align:center;
@@ -43,18 +46,18 @@ h4.rpgCal-dates-header {
 ul.rpg-cal-legend {
 	padding: 0;
 }
-li.rpgCal-legend-item {
+li.rpgCal-block-legend-item {
 	margin: 0;
 	display: inline;
 	white-space: normal;
 }
-li.rpgCal-legend-item:after {
+li.rpgCal-block-legend-item:after {
     content: " \2022 ";
     font-weight: bold;
 	color:#afafaf;
 }
 
-li.rpgCal-legend-item:last-child:after {
+li.rpgCal-block-legend-item:last-child:after {
     content: none;
 }
 
