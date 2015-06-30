@@ -21,10 +21,10 @@ global $smcFunc, $db_prefix, $modSettings, $sourcedir, $boarddir, $settings, $db
 $hook_functions = array(
   'integrate_pre_include' => '$sourcedir/Subs-rpgCal.php',
   'integrate_actions' => 'rpg_cal',
-  'integrate_load_theme' => 'rpgCalHeader',
-  'integrate_admin_areas' => 'rpgCalAdminMenu',
+  'integrate_load_theme' => 'rpgCal_header',
+  'integrate_admin_areas' => 'rpgCal_adminMenu',
   'integrate_menu_buttons' => 'rpgCalMenuButton',
-  'integrate_load_permissions' => 'rpgCalPermissions',
+  'integrate_load_permissions' => 'rpgCal_permissions',
 );
 // Adding or removing them?
 if (!empty($context['uninstalling']))

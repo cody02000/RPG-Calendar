@@ -47,6 +47,7 @@ function rpgCalCurrent() {
 	global $context, $scripturl, $txt;
 	$context['sub_template'] = 'current';
 	$context['rpgCalTest'] = 'Current Calendar Future Feature';
+	
 }
 
 function rpgCalYear() {

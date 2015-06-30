@@ -41,7 +41,8 @@ $txt['rpg_cal_current_date_settings'] = 'Current Date Settings';
 $txt['rpg_cal_page_title']= 'Calendar';
 $txt['rpg_cal'] = 'Calendar';
 
-$txt['rpg_cal_bbcode_headings']=array('Su','Mo','Tu','We','Th','Fr','Sa');
+$txt['rpg_cal_short_headings']=array('Su','Mo','Tu','We','Th','Fr','Sa');
+$txt['rpg_cal_long_headings']=array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
 
 $txt['sp_function_sp_rpgCal_label'] = 'RPG Calendar Block';
 $txt['sp_function_sp_rpgCal_desc'] = 'Displays a calendar in a block based on the current dates of the RPG Date and Calendar Mod.';

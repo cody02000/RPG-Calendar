@@ -347,4 +347,22 @@ function rpgCalListGetNumEvents()
   return $num_items;
 }
 
+/**
+ *  Creates a BBCode calendar for the admin section.
+ */
+function rpgCalBBCodeAdmin()
+{
+	global $txt, $context, $scripturl, $sourcedir;
+
+	$context['page_title'] = $txt['rpg_cal_bbcode_title'];
+	$context['sub_template'] = 'BBCode';
+	$context['rpg_cal_form'] = $scripturl . ($context['current_action']=='admin') ? '?action=admin;area=rpg_cal;sa=bbcode' : '?action=rpg_cal;sa=bbcode';
+	
+	if (isset($_REQUEST['submit']))
+	{
+		$year=intval($_REQUEST['rpgCal-year']);
+		$month=intval($_REQUEST['rpgCal-month']);
+		$context['rpg_cal_bbcode']=rpgCal_bbcodeContent($year,$month);
+	}
+}
 ?>

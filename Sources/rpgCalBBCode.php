@@ -17,7 +17,7 @@ global $smcFunc, $db_prefix, $modSettings;
 $year=intval($_POST['rpgCalYear']);
 $month=intval($_POST['rpgCalMonth']);
 $rpgCalEventMultiple=array(0,255);
-list($rpgCalEvents,$rpgCalLegend, $rpgCalEventmultiple)=rpgCalEvent($year,$month, $rpgCalEventMultiple);
+list($rpgCalEvents,$rpgCalLegend, $rpgCalEventmultiple)=rpgCal_event($year,$month, $rpgCalEventMultiple);
 echo rpgCalDrawBBCode($month,$year,$aoevents);
 ksort($events);
 $rpgCalLegend='<ul>';

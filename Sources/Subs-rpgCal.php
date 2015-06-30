@@ -30,7 +30,7 @@ function rpg_cal(&$actionArray)
  *  
  *  Called by integrate_load_theme hook.
  */
-function rpgCalHeader(){
+function rpgCal_header(){
   global $context, $settings, $modSettings;
   
     if (!isset($context['jquery'])) {
@@ -51,7 +51,7 @@ function rpgCalHeader(){
  *  
  *  @param array $admin_areas
  */
-function rpgCalAdminMenu(&$admin_areas)
+function rpgCal_adminMenu(&$admin_areas)
 {
   global $txt, $scripturl;
   loadLanguage('rpgCal');
@@ -72,7 +72,7 @@ function rpgCalAdminMenu(&$admin_areas)
  *  Called by the integrate_load_permissions hook.
  *  
  */
-function rpgCalPermissions(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions)
+function rpgCal_permissions(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions)
 {
   global $context;
   
@@ -102,26 +102,7 @@ function rpgCal_portalBlock($start=0,$end=0)
   $startdate = explode("-", empty($start) ? $modSettings['rpg_start_date']:$start);
   $enddate = explode("-", empty($end) ? $modSettings['rpg_end_date']:$end);
   
-  rpgCalCalendar($startdate,$enddate);
-}
-
-/**
- *  Creates a BBCode calendar for the admin section.
- */
-function rpgCalBBCodeAdmin()
-{
-	global $txt, $context, $scripturl, $sourcedir;
-
-	$context['page_title'] = $txt['rpg_cal_bbcode_title'];
-	$context['sub_template'] = 'BBCode';
-	$context['rpg_cal_form'] = $scripturl . ($context['current_action']=='admin') ? '?action=admin;area=rpg_cal;sa=bbcode' : '?action=rpg_cal;sa=bbcode';
-	
-	if (isset($_REQUEST['submit']))
-	{
-		$year=intval($_REQUEST['rpgCal-year']);
-		$month=intval($_REQUEST['rpgCal-month']);
-		$context['rpg_cal_bbcode']=rpgCalBBCodeContent($year,$month);
-	}
+  rpgCal_calendar($startdate,$enddate);
 }
 
 /**
@@ -133,7 +114,7 @@ function rpgCalBBCodeAdmin()
  *  Calls rpgCalLegend to create combined legend for all events.
  */
 
-function rpgCalCalendar($startdate,$enddate) {
+function rpgCal_calendar($startdate,$enddate) {
 
   $eventslegend=array();
   $eventmultiple=array(0,255);
@@ -142,8 +123,8 @@ function rpgCalCalendar($startdate,$enddate) {
       echo '<h4 class="rpgCal-dates-header">'. date("F j", mktime(0, 0, 0, $startdate[1], $startdate[2], $startdate[0])) . '&ndash;'. date("F j, Y", mktime(0, 0, 0, $enddate[1], $enddate[2], $enddate[0])).'</h4>';
       $i = intval($startdate[1]);
       while ($i <= $enddate[1]):
-        list($events,$legend, $eventmultiple)=rpgCalEvent($startdate[0],$i, $eventmultiple);
-        echo rpgCalDrawCalendar($i,$startdate[0],$events);
+        list($events,$legend, $eventmultiple)=rpgCal_event($startdate[0],$i, $eventmultiple);
+        echo rpgCal_drawCalendar($i,$startdate[0],$events);
         $eventslegend=$eventslegend+$legend;
         $i++;
       endwhile;
@@ -152,15 +133,15 @@ function rpgCalCalendar($startdate,$enddate) {
       echo '<h4 class="rpgCal-dates-header">'. date("F j, Y", mktime(0, 0, 0, $startdate[1], $startdate[2], $startdate[0])) . '&ndash;'. date("F j, Y", mktime(0, 0, 0, $enddate[1], $enddate[2], $enddate[0])).'</h4>';
       $i = intval($startdate[1]);
       while ($i <= 12):
-        list($events,$legend, $eventmultiple)=rpgCalEvent($startdate[0],$i, $eventmultiple);
-        echo rpgCalDrawCalendar($i,$startdate[0],$events);
+        list($events,$legend, $eventmultiple)=rpgCal_event($startdate[0],$i, $eventmultiple);
+        echo rpgCal_drawCalendar($i,$startdate[0],$events);
         $eventslegend=$events+$eventslegend;
         $i++;
       endwhile;
       $i=1;
       while ($i <= $enddate[1]):
-        list($events,$legend, $eventmultiple)=rpgCalEvent($enddate[0],$i, $eventmultiple);
-        echo rpgCalDrawCalendar($i,$enddate[0],$events);
+        list($events,$legend, $eventmultiple)=rpgCal_event($enddate[0],$i, $eventmultiple);
+        echo rpgCal_drawCalendar($i,$enddate[0],$events);
         $eventslegend=$eventslegend+$legend;
         $i++;
       endwhile;
@@ -168,100 +149,182 @@ function rpgCalCalendar($startdate,$enddate) {
   }
   else {
     echo '<h4 class="rpgCal-dates-header">'. date("F j", mktime(0, 0, 0, $startdate[1], $startdate[2], $startdate[0])) . '&dash;'. date("j Y", mktime(0, 0, 0, $enddate[1], $enddate[2], $enddate[0])).'</h4>';
-    list($events,$eventslegend,$eventmultiple)=rpgCalEvent($enddate[0],$enddate[1], $eventmultiple);
-    echo rpgCalDrawCalendar($enddate[1],$enddate[0],$events);
+    list($events,$eventslegend,$eventmultiple)=rpgCal_event($enddate[0],$enddate[1], $eventmultiple);
+    echo rpgCal_drawCalendar($enddate[1],$enddate[0],$events);
   }
   $legend=super_unique($eventslegend);
-  echo rpgCalLegend($legend);
+  echo rpgCal_legend($legend);
   global $context;
 }
 
 /**
- *  Remove duplicates from multi-dimensional array.
+ *  Create calendar and legend.
  *  
- *  @param array $array
+ *  Calls rpgCalDrawCalendar to create calendar for one month.  BBCode form only allows requesting one month at a time.
+ *  Calls rpgCalEvent to get events.  Function then creates bbcode legend.
  *  
- *  @return array $result array without duplicates.
+ *  @param int $year Four digit year
+ *  @param int $month Two digit month
+ *  
+ *  @return string BBCode calendar and legend
  */
-function super_unique($array)
-{
-  $result = array_map("unserialize", array_unique(array_map("serialize", $array)));
-
-  foreach ($result as $key => $value)
-  {
-    if ( is_array($value) )
-    {
-      $result[$key] = super_unique($value);
-    }
-  }
-
-  return $result;
+function rpgCal_bbcodeContent($year,$month) {
+	$eventMultiple=array(0,255);
+	list($events,$legend, $eventmultiple)=rpgCal_event($year,$month, $eventMultiple);
+	$content['calendar']=rpgCalDrawBBCode($month,$year,$events,'bbcode');
+	ksort($events);
+	if (!isset($events['0'])){
+		$content['legend']='<ul>';
+			foreach ($events as $key => $value) {
+				$content['legend'].= '<li style="color:'.$value['color'].'">[color='.$value['color'].'][b]'.date("F", mktime(0, 0, 0, $month, 01, $year)).' '.$key.'-'.$value['title'].'[/b][/color]</li>'.PHP_EOL;
+			}
+			$content['legend'].='</ul>';
+	}
+	else {$content['legend']='';}
+	return $content;
 }
+
 /**
- *  Draws a calendar from the given dates with the given events.
+ *  Draws a calendar from the given dates with the given events of a certain calendar type.
  *  
  *  @param int $month two digit month
  *  @param int $year four digit year
  *  @param array $events array of events from the specified month.
+ *  @param string $type the type of calendar to draw.
  *  
- *  @returns string $calendar HTML output.
+ *  @returns string $parsedCalendar of whatever type of calendar was specified by $type.
  */
-function rpgCalDrawCalendar($month,$year,$events){
-	/* draw table */
-	$calendar = '<table cellpadding="0" cellspacing="0" class="rpgCal">';
-
+function rpgCal_drawCalendar($month,$year,$events,$type='block'){
+	global $txt;
+	
+	//All of the place-holders for different types of calendars.  
+	//First level of array is the calendar type, second level are all the place-holders.
+	$drawCal = array(
+		'bbcode' => array(
+			'calendar_open' => '<pre>[quote]',
+			'heading_open' => '[center][b]',
+			'heading_close' => '[/b][/center][pre]'. PHP_EOL,
+			'table_heading_open' => '',
+			'table_heading_implode' => ' ',
+			'table_heading_close' => PHP_EOL,
+			'row_week_one' => '',
+			'blank_days' => '   ',
+			'event_day_open' => '',
+			'event_day_color_open' => '[color=',
+			'event_day_color_close' => ']',
+			'event_day_close' => '[/color] ',
+			'non_day_open' => '',
+			'non_day_close' => ' ',
+			'week_end' => PHP_EOL,
+			'week_start' => '',
+			'last_row' => PHP_EOL,
+			'calendar_close' => '[/pre][/quote]</pre>'.PHP_EOL,
+		),
+		'block' => array(
+			'calendar_open' => '<table cellpadding="0" cellspacing="0" class="rpgCal">' . PHP_EOL,
+			'heading_open' => '<caption>',
+			'heading_close' => '</caption>'. PHP_EOL,
+			'table_heading_open' => '<tr class="rpgCal-row">'. PHP_EOL .'<th class="rpgCal-day-head">',
+			'table_heading_implode' => '</th>'. PHP_EOL .'<th class="rpgCal-day-head">',
+			'table_heading_close' => '</th>'. PHP_EOL .'</tr>',
+			'row_week_one' => '<tr class="rpgCal-row">',
+			'blank_days' => '<td class="rpgCal-day-np"> </td>',
+			'event_day_open' => '<td class="rpgCal-day tip" data-tip="',
+			'event_day_color_open' => '" style="color:',
+			'event_day_color_close' => '">',
+			'event_day_close' => '</td>'.PHP_EOL,
+			'non_day_open' => '<td class="rpgCal-day">',
+			'non_day_close' => '</td>'.PHP_EOL,
+			'week_end' => '</tr>',
+			'week_start' => '<tr class="rpgCal-row">'.PHP_EOL,
+			'last_row' => '</tr>',
+			'calendar_close' => '</table>',
+		),
+	);
+	
+	
+	//Start new calendar month.
+	$calendar='{calendar_open}';
+	$monthTitle=date("F", mktime(0, 0, 0, $month, 01, $year));
+	$calendar.='{heading_open}' . $monthTitle . '{heading_close}';
+	
 	/* table headings */
-	$headings = array('Su','Mo','Tu','We','Th','Fr','Sa');
-	$calendar.= '<caption>'.date("F", mktime(0, 0, 0, $month, 01, $year)).'</caption>'. PHP_EOL .'<tr class="rpgCal-row">'. PHP_EOL .'<th class="rpgCal-day-head">'.implode('</th>'. PHP_EOL .'<th class="rpgCal-day-head">',$headings).'</th>'. PHP_EOL .'</tr>';
-
+	$headings = $txt['rpg_cal_day_short_headings'];
+	$calendar.= '{table_heading_open}' . implode('{table_heading_implode}',$headings) . '{table_heading_close}';
+	
 	/* days and weeks vars now ... */
 	$running_day = date('w',mktime(0,0,0,$month,1,$year));
 	$days_in_month = date('t',mktime(0,0,0,$month,1,$year));
 	$days_in_this_week = 1;
 	$day_counter = 0;
 	$dates_array = array();
+	
 	/* row for week one */
-	$calendar.= '<tr class="rpgCal-row">';
-
+	$calendar.= '{row_week_one}';
+	
 	/* print "blank" days until the first of the current week */
 	for($x = 0; $x < $running_day; $x++):
-		$calendar.= '<td class="rpgCal-day-np"> </td>';
+		$calendar.= '{blank_days}';
 		$days_in_this_week++;
 	endfor;
-
+	
 	/* keep going with days.... */
 	for($list_day = 1; $list_day <= $days_in_month; $list_day++):
+		if ($list_day<=9):
+			$calendar.=' ';
+		endif;
 		if (isset($events[$list_day])):
-			$calendar.= '<td class="rpgCal-day tip" data-tip="'.$events[$list_day]['title'].'" style="color:'.$events[$list_day]['color'].'">'.$list_day.'</td>'.PHP_EOL;
+			$calendar.= '{event_day_open}{event_day_color_open}'.$events[$list_day]['color'].'{event_day_color_close}'.$list_day.'{event_day_close}';
 			else:
-				$calendar.= '<td class="rpgCal-day">'.$list_day.'</td>'.PHP_EOL;
+				$calendar.= '{non_day_open}' . $list_day . '{non_day_close}';
 		endif;
 		if($running_day == 6):
-			$calendar.= '</tr>';
+			$calendar.= '{week_end}';
 			if(($day_counter+1) != $days_in_month):
-				$calendar.= '<tr class="rpgCal-row">'.PHP_EOL;
+				$calendar.= '{week_start}';
 			endif;
 			$running_day = -1;
 			$days_in_this_week = 0;
 		endif;
 		$days_in_this_week++; $running_day++; $day_counter++;
 	endfor;
-
+	
 	/* finish the rest of the days in the week */
 	if($days_in_this_week < 8):
 		for($x = 1; $x <= (8 - $days_in_this_week); $x++):
-			$calendar.= '<td class="rpgCal-day-np"> </td>'.PHP_EOL;
+			$calendar.= '{blank_days}';
 		endfor;
 	endif;
 
 	/* final row */
-	$calendar.= '</tr>'.PHP_EOL;
+	$calendar.= '{last_row}'.PHP_EOL;
 
 	/* end the table */
-	$calendar.= '</table>'.PHP_EOL;
+	$calendar.= '{calendar_close}'.PHP_EOL;
 	
-	/* all done, return result */
-	return $calendar;
+	//parse the calendar.
+	$placeholders=$drawCal[$type];
+	
+	$parsedCalendar = preg_replace_callback(
+
+		// the pattern, no need to escape curly brackets
+		// uses a group (the parentheses) that will be captured in $matches[ 1 ]
+		'/{([a-z0-9_]+)}/',
+
+		// the callback, uses $placeholders array of possible variables
+		function( $matches ) use ( $placeholders )
+		{
+			$key = $matches[ 1 ];
+			// return the complete match (captures in $matches[ 0 ]) if no allowed value is found
+			return array_key_exists( $key, $placeholders ) ? $placeholders[ $key ] : $matches[ 0 ];
+		},
+
+		// the input string
+		$calendar
+	);
+	
+	//return the finished parsed calendar.
+	return $parsedCalendar;
 }
 
 /**
@@ -276,7 +339,7 @@ function rpgCalDrawCalendar($month,$year,$events){
  *  
  *  @return array
  */
-function rpgCalEvent($year,$month,$multiple){
+function rpgCal_event($year,$month,$multiple){
 global $smcFunc, $db_prefix, $modSettings;
 	$request = $smcFunc['db_query']('', '
 		SELECT DAYOFMONTH(event_date) AS day, title, color
@@ -332,6 +395,61 @@ global $smcFunc, $db_prefix, $modSettings;
 }
 
 /**
+ *  Called by rpgCalCalendar to create legend.
+ *  @param array $events with no duplicates.
+ *  
+ *  @return string $legend HTML output.
+ */
+function rpgCal_legend($events) {
+	if (!isset($events['0000-00-00'])){
+		$legend='<ul class="rpgCal-legend">';
+		foreach ($events as $key => $value) {
+			$legend.= '<li class="rpgCal-legend-item" style="color:'.$value['color'].'">'.$value['title'].'</li>'.PHP_EOL;
+		}
+		$legend.='</ul>';
+		return $legend;
+	}
+}
+
+/**
+ *  Converts rgb value to hex value.
+ *  
+ *  Called in rpgCalEvents.
+ *  
+ *  @param array $rgb array of rgb numbers
+ *  @return string $hex hex value with # for bbcode and html color.
+ */
+function rgb2hex($rgb) {
+   $hex = "#";
+   $hex .= str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
+   $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
+   $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
+
+   return $hex; // returns the hex value including the number sign (#)
+}
+
+/**
+ *  Remove duplicates from multi-dimensional array.
+ *  
+ *  @param array $array
+ *  @return array $result array without duplicates.
+ */
+function super_unique($array)
+{
+  $result = array_map("unserialize", array_unique(array_map("serialize", $array)));
+
+  foreach ($result as $key => $value)
+  {
+    if ( is_array($value) )
+    {
+      $result[$key] = super_unique($value);
+    }
+  }
+
+  return $result;
+}
+
+/**
  *  Var dump all the events for a given month.  Used for debugging.
  */
 function rpgCalEventDisplay($year,$month){
@@ -358,131 +476,4 @@ global $smcFunc, $db_prefix, $modSettings;
 		
 	echo'<pre>'; print_r($events); echo '<pre/>';
 	var_dump($events);
-}
-
-/**
- *  Called by rpgCalCalendar to create legend.
- *  @param array $events with no duplicates.
- *  
- *  @return string $legend HTML output.
- */
-function rpgCalLegend($events) {
-	if (!isset($events['0000-00-00'])){
-		$legend='<ul class="rpgCal-legend">';
-		foreach ($events as $key => $value) {
-			$legend.= '<li class="rpgCal-legend-item" style="color:'.$value['color'].'">'.$value['title'].'</li>'.PHP_EOL;
-		}
-		$legend.='</ul>';
-		return $legend;
-	}
-}
-
-/**
- *  Converts rgb value to hex value.
- *  
- *  Called in rpgCalEvents.
- *  
- *  @param array $rgb array of rgb numbers
- *  
- *  @return string $hex hex value with # for bbcode and html color.
- */
-function rgb2hex($rgb) {
-   $hex = "#";
-   $hex .= str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
-   $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
-   $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
-
-   return $hex; // returns the hex value including the number sign (#)
-}
-
-/**
- *  Draws a BBCode Calendar for one month.
- *  
- *  @param int @month two digit month
- *  @param int @year four digit year
- *  @param array $events An array of events, indexed by day for the month and year requested.
- *  @return string bbcode calendar
- */
-function rpgCalDrawBBCode($month,$year,$events){
-	global $txt;
-	/* draw table */
-	$calendar = '<pre>[quote][center][b]'.date("F", mktime(0, 0, 0, $month, 01, $year)).'[/b][/center][pre]'. PHP_EOL;
-
-	/* table headings */
-	$headings = $txt['rpg_cal_bbcode_headings'];
-	$calendar.= implode(' ',$headings) . PHP_EOL;
-
-	/* days and weeks vars now ... */
-	$running_day = date('w',mktime(0,0,0,$month,1,$year));
-	$days_in_month = date('t',mktime(0,0,0,$month,1,$year));
-	$days_in_this_week = 1;
-	$day_counter = 0;
-	$dates_array = array();
-
-	/* print "blank" days until the first of the current week */
-	for($x = 0; $x < $running_day; $x++):
-		$calendar.= '   ';
-		$days_in_this_week++;
-	endfor;
-
-	/* keep going with days.... */
-	for($list_day = 1; $list_day <= $days_in_month; $list_day++):
-		if ($list_day<=9):
-			$calendar.=' ';
-		endif;
-		if (isset($events[$list_day])):
-			$calendar.= '[color='.$events[$list_day]['color'].']'.$list_day.'[/color] ';
-			else:
-				$calendar.= $list_day.' ';
-		endif;
-		if($running_day == 6):
-			$calendar.= PHP_EOL;
-			if(($day_counter+1) != $days_in_month):
-			endif;
-			$running_day = -1;
-			$days_in_this_week = 0;
-		endif;
-		$days_in_this_week++; $running_day++; $day_counter++;
-	endfor;
-
-	/* finish the rest of the days in the week */
-	if($days_in_this_week < 8):
-		for($x = 1; $x <= (8 - $days_in_this_week); $x++):
-			$calendar.= '   ';
-		endfor;
-	endif;
-
-	/* final row */
-	$calendar.= PHP_EOL .'[/pre][/quote]</pre>'.PHP_EOL;
-	
-	/* all done, return result */
-	return $calendar;
-}
-
-/**
- *  Create calendar and legend.
- *  
- *  Calls rpgCalDrawBBCode to create calendar for one month.  BBCode form only allows requesting one month at a time.
- *  Calls rpgCalEvent to get events.  Function then creates bbcode legend.
- *  
- *  @param int $year Four digit year
- *  @param int $month Two digit month
- *  
- *  @return string BBCode calendar and legend
- */
-function rpgCalBBCodeContent($year,$month) {
-	$eventMultiple=array(0,255);
-	list($events,$legend, $eventmultiple)=rpgCalEvent($year,$month, $eventMultiple);
-	$content['calendar']=rpgCalDrawBBCode($month,$year,$events);
-	ksort($events);
-	if (!isset($events['0'])){
-		$content['legend']='<ul>';
-			foreach ($events as $key => $value) {
-				$content['legend'].= '<li style="color:'.$value['color'].'">[color='.$value['color'].'][b]'.date("F", mktime(0, 0, 0, $month, 01, $year)).' '.$key.'-'.$value['title'].'[/b][/color]</li>'.PHP_EOL;
-			}
-			$content['legend'].='</ul>';
-	}
-	else {$content['legend']='';}
-	return $content;
-
 }
