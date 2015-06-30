@@ -204,15 +204,10 @@ function rpgCal_drawCalendar($month,$year,$events,$type='block'){
 			'calendar_open' => '<pre>[quote]',
 			'heading_open' => '[center][b]',
 			'heading_close' => '[/b][/center][pre]'. PHP_EOL,
-			'table_heading_open' => '',
-			'table_heading_implode' => ' ',
-			'table_heading_close' => PHP_EOL,
+			'day_headings' => $txt['rpg_cal_day_short_headings'],
+			'week_heading' => implode(' ',$drawCal[$type]['day_headings']) . PHP_EOL,
 			'row_week_one' => '',
 			'blank_days' => '   ',
-			'event_day_open' => '',
-			'event_day_color_open' => '[color=',
-			'event_day_color_close' => ']',
-			'event_day_close' => '[/color] ',
 			'non_day_open' => '',
 			'non_day_close' => ' ',
 			'week_end' => PHP_EOL,
@@ -224,15 +219,10 @@ function rpgCal_drawCalendar($month,$year,$events,$type='block'){
 			'calendar_open' => '<table cellpadding="0" cellspacing="0" class="rpgCal-block">' . PHP_EOL,
 			'heading_open' => '<caption>',
 			'heading_close' => '</caption>'. PHP_EOL,
-			'table_heading_open' => '<tr class="rpgCal-block-row">'. PHP_EOL .'<th class="rpgCal-block-day-head">',
-			'table_heading_implode' => '</th>'. PHP_EOL .'<th class="rpgCal-block-day-head">',
-			'table_heading_close' => '</th>'. PHP_EOL .'</tr>',
+			'day_headings' => $txt['rpg_cal_day_short_headings'],
+			'week_heading' => '<tr class="rpgCal-block-row">'. PHP_EOL .'<th class="rpgCal-block-day-head">' . implode('</th>'. PHP_EOL .'<th class="rpgCal-block-day-head">',$drawCal[$type]['day_headings']) . '</th>'. PHP_EOL .'</tr>',
 			'row_week_one' => '<tr class="rpgCal-block-row">',
 			'blank_days' => '<td class="rpgCal-block-day-np"> </td>',
-			'event_day_open' => '<td class="rpgCal-block-day tip" data-tip="',
-			'event_day_color_open' => '" style="color:',
-			'event_day_color_close' => '">',
-			'event_day_close' => '</td>'.PHP_EOL,
 			'non_day_open' => '<td class="rpgCal-block-day">',
 			'non_day_close' => '</td>'.PHP_EOL,
 			'week_end' => '</tr>',
@@ -240,17 +230,30 @@ function rpgCal_drawCalendar($month,$year,$events,$type='block'){
 			'last_row' => '</tr>',
 			'calendar_close' => '</table>',
 		),
+		'full_calendar' => array(
+			'calendar_open' => '<table cellpadding="0" cellspacing="0" class="rpgCal-full">' . PHP_EOL,
+			'heading_open' => '<caption>',
+			'heading_close' => '</caption>'. PHP_EOL,
+			'day_headings' => $txt['rpg_cal_day_long_headings'],
+			'week_heading' => '<tr class="rpgCal-full-row">'. PHP_EOL .'<th class="rpgCal-full-day-head">' . implode('</th>'. PHP_EOL .'<th class="rpgCal-full-day-head">',$drawCal[$type]['day_headings']) . '</th>'. PHP_EOL .'</tr>',
+			'row_week_one' => '<tr class="rpgCal-full-row">',
+			'blank_days' => '<td class="rpgCal-full-day-np"> </td>',
+			'non_day_open' => '<td class="rpgCal-full-day">',
+			'non_day_close' => '</td>'.PHP_EOL,
+			'week_end' => '</tr>',
+			'week_start' => '<tr class="rpgCal-full-row">'.PHP_EOL,
+			'last_row' => '</tr>',
+			'calendar_close' => '</table>',
+		),
 	);
-	
-	
+		
 	//Start new calendar month.
 	$calendar='{calendar_open}';
 	$monthTitle=date("F", mktime(0, 0, 0, $month, 01, $year));
 	$calendar.='{heading_open}' . $monthTitle . '{heading_close}';
 	
 	/* table headings */
-	$headings = $txt['rpg_cal_day_short_headings'];
-	$calendar.= '{table_heading_open}' . implode('{table_heading_implode}',$headings) . '{table_heading_close}';
+	$calendar.= $drawCal[$type]['week_heading'];
 	
 	/* days and weeks vars now ... */
 	$running_day = date('w',mktime(0,0,0,$month,1,$year));
@@ -263,38 +266,49 @@ function rpgCal_drawCalendar($month,$year,$events,$type='block'){
 	$calendar.= '{row_week_one}';
 	
 	/* print "blank" days until the first of the current week */
-	for($x = 0; $x < $running_day; $x++):
+	for($x = 0; $x < $running_day; $x++) {
 		$calendar.= '{blank_days}';
 		$days_in_this_week++;
-	endfor;
+	}
 	
 	/* keep going with days.... */
-	for($list_day = 1; $list_day <= $days_in_month; $list_day++):
+	for($list_day = 1; $list_day <= $days_in_month; $list_day++) {
 		if ($list_day<=9):
 			$calendar.=' ';
 		endif;
-		if (isset($events[$list_day])):
-			$calendar.= '{event_day_open}{event_day_color_open}'.$events[$list_day]['color'].'{event_day_color_close}'.$list_day.'{event_day_close}';
+		if (isset($events[$list_day])) {
+			switch ($type) {
+				case "bbcode":
+					$calendar.='[color=' . $events[$list_day]['color'] . ']' . $list_day . '[/color]';
+					break;
+				case "block":
+					$calendar.='<td class="rpgCal-block-day tip" data-tip="' . $events[$list_day]['title'] . '" style="color:' . $events[$list_day]['color'] . '">"' . $list_day . '</td>' . PHP_EOL;
+					break;
+				case "full_calendar":
+					$eventReplace = '</li>' . PHP_EOL . '<li class="rpgCal-full-event">';
+					$calendar.='<td class="rpgCal-full-day" style="color:' . $events[$list_day]['color'] . '"><span class="">' . $list_day . '</span><ul class="rpgCal-full-event-list"><li class="rpgCal-full-event">' . str_replace(',', $eventReplace, $events[$list_day]['title']) . '</li></ul></td>' . PHP_EOL;
+					break;
+			}
 			else:
 				$calendar.= '{non_day_open}' . $list_day . '{non_day_close}';
-		endif;
-		if($running_day == 6):
+		}
+		if($running_day == 6) {
 			$calendar.= '{week_end}';
-			if(($day_counter+1) != $days_in_month):
+			if(($day_counter+1) != $days_in_month) {
 				$calendar.= '{week_start}';
-			endif;
+			}
 			$running_day = -1;
 			$days_in_this_week = 0;
-		endif;
+		}
 		$days_in_this_week++; $running_day++; $day_counter++;
-	endfor;
+	}
 	
 	/* finish the rest of the days in the week */
-	if($days_in_this_week < 8):
-		for($x = 1; $x <= (8 - $days_in_this_week); $x++):
+	if($days_in_this_week < 8) {
+		for($x = 1; $x <= (8 - $days_in_this_week); $x++) {
 			$calendar.= '{blank_days}';
-		endfor;
-	endif;
+		}
+	}
 
 	/* final row */
 	$calendar.= '{last_row}'.PHP_EOL;
