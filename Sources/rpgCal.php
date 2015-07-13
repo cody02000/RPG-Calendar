@@ -44,10 +44,53 @@ function rpgCalMain()
 }
 
 function rpgCalCurrent() {
-	global $context, $scripturl, $txt;
+	global $context, $scripturl, $txt, $modSettings;
 	$context['sub_template'] = 'current';
 	$context['rpgCalTest'] = 'Current Calendar Future Feature';
 	
+	$type = 'full_calendar';
+	$context['rpgCal']=true;
+	$startdate = explode("-", empty($start) ? $modSettings['rpg_start_date']:$start);
+	$enddate = explode("-", empty($end) ? $modSettings['rpg_end_date']:$end);
+
+	$eventslegend=array();
+	$eventmultiple=array(0,255);
+	if ($startdate[1] !== $enddate[1]) {
+		if ($startdate[0] == $enddate[0]) {
+			echo '<h4 class="rpgCal-dates-header">'. date("F j", mktime(0, 0, 0, $startdate[1], $startdate[2], $startdate[0])) . '&ndash;'. date("F j, Y", mktime(0, 0, 0, $enddate[1], $enddate[2], $enddate[0])).'</h4>';
+			$i = intval($startdate[1]);
+			while ($i <= $enddate[1]):
+				list($events,$legend, $eventmultiple)=rpgCal_event($startdate[0],$i, $eventmultiple);
+				echo rpgCal_drawCalendar($i,$startdate[0],$events,$type);
+				$eventslegend=$eventslegend+$legend;
+				$i++;
+			endwhile;
+		}
+		else {
+			echo '<h4 class="rpgCal-dates-header">'. date("F j, Y", mktime(0, 0, 0, $startdate[1], $startdate[2], $startdate[0])) . '&ndash;'. date("F j, Y", mktime(0, 0, 0, $enddate[1], $enddate[2], $enddate[0])).'</h4>';
+			$i = intval($startdate[1]);
+			while ($i <= 12):
+				list($events,$legend, $eventmultiple)=rpgCal_event($startdate[0],$i, $eventmultiple);
+				echo rpgCal_drawCalendar($i,$startdate[0],$events,$type);
+				$eventslegend=$events+$eventslegend;
+				$i++;
+			endwhile;
+			$i=1;
+			while ($i <= $enddate[1]):
+				list($events,$legend, $eventmultiple)=rpgCal_event($enddate[0],$i, $eventmultiple);
+				echo rpgCal_drawCalendar($i,$enddate[0],$events,$type);
+				$eventslegend=$eventslegend+$legend;
+				$i++;
+			endwhile;
+		}
+	}
+	else {
+		echo '<h4 class="rpgCal-dates-header">'. date("F j", mktime(0, 0, 0, $startdate[1], $startdate[2], $startdate[0])) . '&dash;'. date("j Y", mktime(0, 0, 0, $enddate[1], $enddate[2], $enddate[0])).'</h4>';
+		list($events,$eventslegend,$eventmultiple)=rpgCal_event($enddate[0],$enddate[1], $eventmultiple);
+		echo rpgCal_drawCalendar($enddate[1],$enddate[0],$events,$type);
+	}
+	$legend=super_unique($eventslegend);
+	echo rpgCal_legend($legend);
 }
 
 function rpgCalYear() {
