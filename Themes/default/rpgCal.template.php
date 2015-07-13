@@ -10,15 +10,21 @@
 
 function template_current()
 {
-	echo $context['rpgCalTest'];
+	global $context, $scripturl, $txt, $modSettings;
+	echo $context['rpg_full_calendar']; 
+	echo $context['rpg_full_calendar_legend'];
 }
 
 function template_year()
 {
+	global $context, $scripturl, $txt, $modSettings;
 	echo $context['rpgCalTest'];
+	echo '<h1>year</h1>';
 }
 
 function template_bbcode()
 {
+	global $context, $scripturl, $txt, $modSettings;
 	echo $context['rpgCalTest'];
+	echo '<h1>bbcode</h1>';
 }
