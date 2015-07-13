@@ -11,8 +11,13 @@
 function template_current()
 {
 	global $context, $scripturl, $txt, $modSettings;
-	echo $context['rpg_full_calendar']; 
-	echo $context['rpg_full_calendar_legend'];
+	
+	echo '<div class="cat_bar"><h3 class="catbg">'. $context['rpg_full_calendar']['start_date'] . '&ndash;'. $context['rpg_full_calendar']['end_date'] .'</h3></div>
+	
+	<div class=windowbg>';
+	var_dump($context['rpg_full_calendar']['calendar']); 
+	echo $context['rpg_full_calendar']['legend'];
+	echo '</div>';
 }
 
 function template_year()

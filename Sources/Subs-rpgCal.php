@@ -289,8 +289,9 @@ function rpgCal_drawCalendar($month,$year,$events,$type='block'){
 					$calendar.='<td class="rpgCal-full-day" style="color:' . $events[$list_day]['color'] . '"><span class="">' . $list_day . '</span><ul class="rpgCal-full-event-list"><li class="rpgCal-full-event">' . str_replace(',', $eventReplace, $events[$list_day]['title']) . '</li></ul></td>' . PHP_EOL;
 					break;
 			}
-			else:
-				$calendar.= '{non_day_open}' . $list_day . '{non_day_close}';
+		}
+		else {
+			$calendar.= '{non_day_open}' . $list_day . '{non_day_close}';
 		}
 		if($running_day == 6) {
 			$calendar.= '{week_end}';
