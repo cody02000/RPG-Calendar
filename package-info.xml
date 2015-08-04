@@ -16,7 +16,7 @@
 	<type>modification</type>
 	<version>1.3</version>
 	
-	<install for="2.0 - 2.0.99,2.0 RC2,2.0 RC3,2.0 RC4,2.0 RC5">
+	<install for="2.0 - 2.0.99">
 		<readme type="inline">This will install RPG Date and Calendar for SMF 2.0.x</readme>
 		<database type="file">install-database.php</database>
 		<code>install-hooks.php</code>
@@ -26,7 +26,7 @@
 		<redirect url="$scripturl?action=admin;area=rpg_cal;sa=events" />
 	</install>
 	
-	<uninstall for="2.0 - 2.0.99,2.0 RC2,2.0 RC3,2.0 RC4,2.0 RC5">
+	<uninstall for="2.0 - 2.0.99">
 		<code>install-hooks.php</code>
 		<modification reverse="true">modification.xml</modification>
 		<remove-file name="$sourcedir/rpgCalAdmin.php" />
